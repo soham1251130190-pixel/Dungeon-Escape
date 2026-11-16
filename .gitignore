@@ -1,0 +1,10 @@
+.tools/
+qa_render/
+*.exe
+*.o
+*.obj
+*.log
+*.err
+*.docx
+__pycache__/
+*.pyc

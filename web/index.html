@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dungeon Escape — Visual Edition</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="commands.css" />
+</head>
+<body>
+  <div class="noise"></div>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">✦</span><div><p>DATA STRUCTURES ADVENTURE</p><h1>DUNGEON <em>ESCAPE</em></h1></div></div>
+    <a class="map-launch" href="map.html">◈ OPEN FULL-SCREEN MAP <span>↗</span></a>
+    <div class="player-hud">
+      <div class="portrait">⚔</div><div><strong id="playerName">Adventurer</strong><small>LEVEL 01 · ESCAPE THE DEPTHS</small></div>
+      <div class="stat health"><span>HP</span><div class="meter"><i id="healthBar"></i></div><b id="healthText">100 / 100</b></div>
+      <div class="stat"><span>ATK</span><b id="attackText">20</b></div><div class="stat"><span>SCORE</span><b id="scoreText">0</b></div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="left-panel panel">
+      <div class="panel-heading"><span>01</span><h2>EXPEDITION</h2></div>
+      <div class="objective"><span class="rune">✧</span><div><small>CURRENT OBJECTIVE</small><strong id="objective">Find the Dungeon Key</strong><p id="objectiveText">Explore the dungeon and open the Treasure Room chest.</p></div></div>
+      <div class="divider"></div>
+      <div class="panel-heading compact"><span>02</span><h2>INVENTORY</h2><b id="itemCount">0</b></div>
+      <div class="inventory" id="inventory"><div class="empty">No items collected</div></div>
+      <div class="divider"></div>
+      <div class="panel-heading compact"><span>03</span><h2>PATHFINDING</h2></div>
+      <button class="action" id="shortestPath"><i>⌁</i> Find shortest path <kbd>BFS</kbd></button>
+      <button class="action" id="exploreGraph"><i>⌘</i> Explore all rooms <kbd>DFS</kbd></button>
+      <button class="action" id="undoMove"><i>↶</i> Undo last move <kbd>STACK</kbd></button>
+      <div class="divider"></div>
+      <div class="legend"><span><i class="dot current"></i> Current</span><span><i class="dot visited"></i> Explored</span><span><i class="dot sealed"></i> Sealed</span></div>
+    </aside>
+
+    <section class="dungeon-stage">
+      <div class="stage-title"><span>◈</span><div><small>FLOOR 01 / THE FORGOTTEN DEPTHS</small><h2>THE DUNGEON MAP</h2></div><span class="key-status" id="keyStatus">KEY: <b>NOT FOUND</b></span></div>
+      <div class="map-frame">
+        <div class="map-glow"></div>
+        <svg class="paths" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M20 80 L20 60 L10 60" /><path d="M20 60 L30 60 L50 60" />
+          <path d="M20 80 L50 80 L50 60 L60 60 L70 40 L80 40" />
+          <path d="M50 60 L70 40" />
+        </svg>
+        <div id="roomMap" class="room-map"></div>
+        <div id="playerDot" class="player-dot" title="Your hero"></div>
+        <div class="map-label">TYPE A COMMAND TO MOVE YOUR HERO</div>
+      </div>
+      <div class="stage-footer"><div><span>ROOM</span><strong id="roomName">Entrance</strong></div><p id="roomDescription">The ancient stone archway where your journey began.</p><button id="fightButton" class="fight hidden">⚔ ENGAGE ENEMY</button></div>
+      <section class="command-panel"><div><strong>⌘ HERO COMMANDS</strong><small> Write: <code>hero</code>.move(up / down / left / right)</small></div><textarea id="commandInput" spellcheck="false">hero.move(up);
+hero.move(up);</textarea><div><span id="commandStatus">READY · ONE COMMAND MOVES ONE TILE</span><button id="runCode">▶ RUN CODE</button></div></section>
+    </section>
+
+    <aside class="right-panel panel">
+      <div class="panel-heading"><span>04</span><h2>DUNGEON LOG</h2><button class="clear-log" id="clearLog">CLEAR</button></div>
+      <div id="log" class="log" aria-live="polite"></div>
+      <div class="divider"></div>
+      <div class="panel-heading compact"><span>05</span><h2>STRUCTURES IN PLAY</h2></div>
+      <div class="structures"><div><i>◎</i><span>GRAPH</span><small>Room network</small></div><div><i>▤</i><span>LIST</span><small>Inventory</small></div><div><i>↶</i><span>STACK</span><small>Move history</small></div><div><i>⌁</i><span>HEAP</span><small>Threat priority</small></div></div>
+      <button class="reset" id="resetGame">↻ Restart dungeon</button>
+    </aside>
+  </main>
+
+  <div id="combat" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="combat-card"><div class="combat-top"><small>THREAT DETECTED · MAX HEAP PRIORITY</small><h2 id="enemyName">DUNGEON DRAGON</h2><p id="enemyLore">An ancient predator blocks the path.</p></div>
+      <div class="versus"><div class="fighter"><div class="avatar hero">⚔</div><b id="combatPlayer">ADVENTURER</b><small>HP <span id="combatPlayerHp">100</span></small></div><div class="vs">VS</div><div class="fighter"><div class="avatar enemy">♛</div><b id="combatEnemy">DRAGON</b><small>HP <span id="combatEnemyHp">120</span></small></div></div>
+      <div class="enemy-queue"><span>ENEMY QUEUE</span><div id="queueVisual"></div></div>
+      <div class="combat-actions"><button id="attackButton">⚔ Attack</button><button id="potionButton">✚ Use potion</button><button id="fleeButton">↩ Flee</button></div>
+    </div>
+  </div>
+  <div id="intro" class="intro"><div class="intro-card"><span>◈ DUNGEON ESCAPE ◈</span><h2>Enter the<br><em>Forgotten Depths</em></h2><p>A visual DSA adventure: explore the graph, collect the key, defeat the guardians, and reach the exit.</p><input id="nameInput" maxlength="20" placeholder="Enter your name" /><button id="startButton">Begin expedition <b>→</b></button></div></div>
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
